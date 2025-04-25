@@ -107,7 +107,7 @@ Results will be saved to output.csv (or the path specified in OUTPUT_PATH). The 
     -   `llm_tools.py`: LLM-based analysis tools (pain point generation) - uses LLM factory
     -   `search_tools.py`: Web search functionality (Serper)
     -   `llm_service.py`: **(DELETED)** - No longer used.
-    -   `utils/`: Utility modules
+-   `utils/`: Utility modules
     -   `llm_factory.py`: **(NEW)** Creates LLM instances based on config.
     -   `logging_utils.py`: Logging setup and error collection
     -   `api_cache.py`: (If used) API response caching
