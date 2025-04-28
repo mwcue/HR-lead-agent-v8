@@ -55,12 +55,15 @@ LLM_PROVIDER="openai"
 OPENAI_API_KEY="sk-YourActualOpenAIKeyHere"
 ANTHROPIC_API_KEY="sk-ant-YourActualAnthropicKeyHere"
 GOOGLE_API_KEY="AIzaYourActualGoogleApiKeyHere"
+MISTRAL_API_KEY="..." #add your actial key int eh .env file
 
 # --- Model Names (Optional - Defaults exist in config.py) ---
 # You can override the default model for the selected provider if needed.
 # OPENAI_MODEL="gpt-4o"
 # ANTHROPIC_MODEL="claude-3-opus-20240229"
 # GEMINI_MODEL="gemini-1.5-pro"
+# OLLAMA_MODEL="llama3" 
+# MISTRAL_MODEL="mistral-large-latest" 
 
 # --- Other Required Config ---
 SERPER_API_KEY="YourActualSerperKeyHere"
@@ -128,21 +131,24 @@ Results will be saved to output.csv (or the path specified in OUTPUT_PATH). The 
 
 ## Troubleshooting
 
--   **LLM Initialization Errors:** Check `utils/llm_factory.py` logs. Ensure `LLM_PROVIDER` in `.env` matches a supported provider ("openai", "anthropic", "google"). Verify the corresponding API key is correctly set in `.env` and valid. Make sure required `langchain-*` packages are installed (`pip install -r requirements.txt`).
--   **API Key Issues**: Double-check keys in `.env` for typos. Ensure the key matches the selected `LLM_PROVIDER`.
--   **Rate Limiting**: LangChain integrations might handle some retries, but check provider documentation if issues persist.
--   **Parsing Errors**: Check `DEBUG` logs for scraping or agent output parsing issues.
--   **Classification Accuracy:** Improve `classify_company` in `main.py` if leads are miscategorized.
--   **Lead Relevance (NE B2B):** Refine prompts/backstories for `ne_b2b_` agents/tasks if the connection to HR conference value is weak.
+## Troubleshooting
+-   **LLM Initialization Errors:** Check `utils/llm_factory.py` logs. Ensure `LLM_PROVIDER` in `.env` matches a supported provider ("openai", "anthropic", "google", "ollama", "mistralai"). # UPDATED LIST
+    *   Verify the corresponding API key (except for Ollama) is correctly set in `.env` and valid.
+    *   For Ollama: Ensure the Ollama server is running at `OLLAMA_BASE_URL` and the `OLLAMA_MODEL` is downloaded (`ollama list`).
+    *   Make sure required `langchain-*` packages are installed (`pip install -r requirements.txt`).
 
 ## Extending the System
 
 -   **Add More LLM Providers:**
-    1.  Install the provider's LangChain package (e.g., `pip install langchain-mistralai`).
+    1.  Install the provider's LangChain package (e.g., `pip install langchain-cohere`).
     2.  Add the package to `requirements.txt`.
     3.  Add configuration variables for the new provider's key/model in `.env` and `config.py`.
     4.  Add an `elif provider == "new_provider":` block in `utils/llm_factory.py` to import and instantiate the correct LangChain chat model class.
-    5.  Update the `SUPPORTED_PROVIDERS` dict in the factory and the list in this README.
--   Improve the company classification logic.
--   Add more sophisticated tools.
--   Implement cross-run duplicate checking.
+    5.  Update the `SUPPORTED_PROVIDERS` dict in the factory and the list of supported providers in this README. # UPDATED Step 5
+
+## To Switch LLM Provider:
+	1. Ensure you have the necessary API key (unless using Ollama) and have installed the required dependencies (pip install -r requirements.txt).
+	2. For Ollama: Make sure the Ollama application is installed and running locally, and that you have downloaded the desired model (e.g., ollama run llama3).
+	3. Change the value of LLM_PROVIDER in your .env file to the desired supported provider (e.g., "openai", "anthropic", "google", "ollama", "mistralai"). # UPDATED LIST
+	4. (Optional) Change the corresponding model name variable (e.g., OLLAMA_MODEL, MISTRAL_MODEL) if you don't want to use the default.
+	5. Re-run the script (python main.py).
