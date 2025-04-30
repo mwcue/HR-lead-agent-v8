@@ -51,6 +51,18 @@ Configuration is primarily handled via the `.env` file in the project root.
 # Supported options (based on utils/llm_factory.py): "openai", "anthropic", "google"
 LLM_PROVIDER="openai"
 
+### Important Note on Provider Compatibility (Current Status)
+
+While this project is structured for model agnosticism using the LLM Factory, **current testing (as of the versions used during development) has revealed persistent integration issues when using providers other than OpenAI, particularly when agent tools are involved.**
+
+*   **Errors Encountered:** When setting `LLM_PROVIDER` to `"anthropic"`, `"google"`, or `"ollama"`, errors such as `litellm.BadRequestError: LLM Provider NOT provided...` or `IndexError: list index out of range` (specifically within LiteLLM's Ollama prompt transformation related to `tool_calls`) were frequently encountered during agent execution steps (like the initial Search or Analysis phases).
+*   **Root Cause:** These errors appear to stem from incompatibilities in how the provider context and tool usage information are passed between CrewAI, the specific LangChain provider libraries (e.g., `ChatAnthropic`, `ChatOllama`), and the underlying LiteLLM library used by CrewAI. LiteLLM fails to reliably determine the correct provider or process tool-related messages for these non-OpenAI models within this specific execution stack.
+*   **Recommendation:** For **full functionality and reliable execution** of all agent tasks (including those requiring tools like web search and analysis), **using the OpenAI provider (`LLM_PROVIDER="openai"`) is currently recommended and known to be stable.**
+*   **Experimentation:** You are welcome to experiment with the other configured providers (`anthropic`, `google`, `ollama`, `mistralai`) by changing the `.env` settings. The LLM Factory will correctly initialize them. However, be aware that you may encounter the errors mentioned above until underlying compatibility issues in the `crewai`, `litellm`, or `langchain-*` libraries are resolved in future updates.
+
+We hope future library updates will improve compatibility and make switching providers seamless for all features.
+
+
 # --- API Keys (Provide key for the selected LLM_PROVIDER above) ---
 OPENAI_API_KEY="sk-YourActualOpenAIKeyHere"
 ANTHROPIC_API_KEY="sk-ant-YourActualAnthropicKeyHere"

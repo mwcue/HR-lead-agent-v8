@@ -139,3 +139,7 @@ cython_debug/
 *.csv
 *.json
 *.log
+
+# other
+.DS_Store
+DS_Store

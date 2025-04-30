@@ -32,10 +32,20 @@ def create_search_tasks(agents):
                 "**Set 2:** Target sources (regional business journals, directories, award lists, industry associations in NE) discussing **B2B companies headquartered or primarily operating in New England** (MA, CT, RI, VT, NH, ME). Focus on sources likely to list multiple B2B service or product providers in the region. "
                 "The final output should combine queries from both sets into one list."
             ),
+#             expected_output=(
+#                # UPDATED Expected Output
+#                "A single Python list of 6-8 relevant query strings, covering both HR industry sources and New England B2B sources."
+#            ),
+            # --- MODIFIED: Make expected output MUCH more explicit ---
             expected_output=(
-                # UPDATED Expected Output
-                "A single Python list of 6-8 relevant query strings, covering both HR industry sources and New England B2B sources."
+                "**CRITICAL:** Your final output MUST be ONLY a Python list of strings, where each string is a unique URL. "
+                "Example format: ['https://example.com/list1', 'https://anothersite.org/article', 'https://regionalsource.net/directory']\n"
+                "Do NOT include any introductory text, concluding remarks, notes, or any other text before or after the Python list itself. "
+                "The output should start directly with '[' and end directly with ']'. Provide up to 10 unique URLs."
             ),
+            # --- END MODIFICATION ---
+
+
             agent=research_agent # Use the validated single research agent
         )
 

@@ -12,7 +12,6 @@ class Config:
     # --- API Keys ---
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
     SERPER_API_KEY = os.getenv("SERPER_API_KEY")
-    # ADDED: Keys for other providers
     ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
     GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
@@ -21,10 +20,12 @@ class Config:
     LLM_PROVIDER = os.getenv("LLM_PROVIDER", "openai").lower() # Default to openai, ensure lowercase
 
     # Specific model names per provider
-    OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4-turbo")
-    # ADDED: Models for other providers
-    ANTHROPIC_MODEL = os.getenv("ANTHROPIC_MODEL", "claude-3-sonnet-20240229")
-    GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-1.5-flash") # Use flash as a reasonable default
+    OPENAI_MODEL = os.getenv("OPENAI_MODEL", "openai/gpt-4-turbo")
+    ANTHROPIC_MODEL = os.getenv("ANTHROPIC_MODEL","anthropic/claude-3-5-haiku-20241022")     #  "claude-3-sonnet-20240229")
+    GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini/gemini-1.5-flash") # Use flash as a reasonable default
+    MISTRAL_MODEL = os.getenv("MISTRAL_MODEL", "mistral/mistral-large-lates")
+    OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "ollama/llama3.2")
+
 
     LLM_TEMPERATURE = float(os.getenv("LLM_TEMPERATURE", "0.1"))
 
