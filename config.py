@@ -14,9 +14,9 @@ class Config:
     SERPER_API_KEY = os.getenv("SERPER_API_KEY")
     ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
     GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+    MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
 
     # --- LLM Settings ---
-    # ADDED: LLM_PROVIDER setting
     LLM_PROVIDER = os.getenv("LLM_PROVIDER", "openai").lower() # Default to openai, ensure lowercase
 
     # Specific model names per provider
@@ -64,19 +64,29 @@ class Config:
         """Validate critical configuration settings based on chosen provider."""
         missing_keys = []
 
+        supported_providers_requiring_keys = ["openai", "anthropic", "google", "mistralai"]
+        all_supported_providers = supported_providers_requiring_keys + ["ollama"]
+
         # Always check Serper
         if not cls.SERPER_API_KEY:
             missing_keys.append("SERPER_API_KEY")
 
+        # Check provider-specific key if required
+        provider = cls.LLM_PROVIDER # Read the provider set in config (from .env)
+
         # Check provider-specific key
-        if cls.LLM_PROVIDER == "openai" and not cls.OPENAI_API_KEY:
+        if provider == "openai" and not cls.OPENAI_API_KEY:
             missing_keys.append("OPENAI_API_KEY (for selected provider 'openai')")
-        elif cls.LLM_PROVIDER == "anthropic" and not cls.ANTHROPIC_API_KEY:
+        elif provider == "anthropic" and not cls.ANTHROPIC_API_KEY:
             missing_keys.append("ANTHROPIC_API_KEY (for selected provider 'anthropic')")
-        elif cls.LLM_PROVIDER == "google" and not cls.GOOGLE_API_KEY:
+        elif provider == "google" and not cls.GOOGLE_API_KEY:
             missing_keys.append("GOOGLE_API_KEY (for selected provider 'google')")
-        elif cls.LLM_PROVIDER not in ["openai", "anthropic", "google"]: # Add other supported providers here
-             missing_keys.append(f"LLM_PROVIDER '{cls.LLM_PROVIDER}' is not recognized/supported by config validation.")
+        elif provider == "mistralai" and not cls.MISTRAL_API_KEY:
+            missing_keys.append("MISTRAL_API_KEY (for provider '{provider}')")
+        elif provider == "ollama":
+            pass # no api key needed for ollama
+        elif cls.LLM_PROVIDER not in all_supported_providers:
+             missing_keys.append(f"LLM_PROVIDER '{provider}' is not recognized/supported by config validation. Supported: {all_supported_providers}")
 
         return missing_keys
 

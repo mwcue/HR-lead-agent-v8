@@ -15,7 +15,8 @@ SUPPORTED_PROVIDERS = {
     "openai": "langchain_openai",
     "anthropic": "langchain_anthropic",
     "google": "langchain_google_genai",
-    # Add other providers here as needed (e.g., "mistralai": "langchain_mistralai")
+    "mistralai": "langchain_mistralai",
+    "ollama": "langchain_community", # or langchain_ollama 
 }
 
 def get_llm_instance():
