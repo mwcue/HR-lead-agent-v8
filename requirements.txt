@@ -92,7 +92,7 @@ langchain-experimental==0.3.4
 langchain-openai>=0.2.14
 langchain-anthropic>=0.1.11
 langchain-google-genai>=1.0.3
-# langchain-mistralai>=0.1.6
+langchain-mistralai>=0.1.6
 langchain-text-splitters==0.3.8
 langsmith==0.3.33
 litellm==1.60.2

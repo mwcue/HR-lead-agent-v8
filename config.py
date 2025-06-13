@@ -16,6 +16,10 @@ class Config:
     GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
     MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
 
+    # Add missing config variables that are referenced in llm_factory.py
+    OPENAI_API_BASE = os.getenv("OPENAI_API_BASE")  # Optional base URL for OpenAI
+    OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")  # Default Ollama URL
+
     # --- LLM Settings ---
     LLM_PROVIDER = os.getenv("LLM_PROVIDER", "openai").lower() # Default to openai, ensure lowercase
 
@@ -23,7 +27,7 @@ class Config:
     OPENAI_MODEL = os.getenv("OPENAI_MODEL", "openai/gpt-4-turbo")
     ANTHROPIC_MODEL = os.getenv("ANTHROPIC_MODEL","anthropic/claude-3-5-haiku-20241022")     #  "claude-3-sonnet-20240229")
     GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini/gemini-1.5-flash") # Use flash as a reasonable default
-    MISTRAL_MODEL = os.getenv("MISTRAL_MODEL", "mistral/mistral-large-lates")
+    MISTRAL_MODEL = os.getenv("MISTRAL_MODEL", "mistral/mistral-large-latest")  # Fixed the typo
     OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "ollama/llama3.2")
 
 
@@ -34,7 +38,7 @@ class Config:
     ANALYSIS_AGENT_MAX_ITER = int(os.getenv("ANALYSIS_AGENT_MAX_ITER", "10")) # Reviewer uses this too
 
     # --- URLs Processing ---
-    MAX_URLS_TO_PROCESS = int(os.getenv("MAX_URLS_TO_PROCESS", "10")) # Keep at 10 as decided
+    MAX_URLS_TO_PROCESS = int(os.getenv("MAX_URLS_TO_PROCESS", "2")) # Keep at 10 as decided
 
     # --- Output Settings ---
     OUTPUT_PATH = os.getenv("OUTPUT_PATH", os.path.join(os.path.dirname(__file__), "output.csv"))

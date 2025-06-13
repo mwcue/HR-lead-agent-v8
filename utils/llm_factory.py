@@ -5,7 +5,7 @@ based on configuration settings. This allows switching LLM providers easily.
 """
 
 import logging
-from config import Config # Import configuration
+from config import Config
 
 # Configure logger
 logger = logging.getLogger(__name__)
@@ -13,18 +13,15 @@ logger = logging.getLogger(__name__)
 # Supported providers - mapping config string to library requirements
 SUPPORTED_PROVIDERS = {
     "openai": "langchain_openai",
-    "anthropic": "langchain_anthropic",
+    "anthropic": "langchain_anthropic", 
     "google": "langchain_google_genai",
     "mistralai": "langchain_mistralai",
-    "ollama": "langchain_community", # or langchain_ollama 
+    "ollama": "langchain_community",
 }
 
 def get_llm_instance():
     """
     Creates and returns a LangChain LLM instance based on Config settings.
-
-    Reads Config.LLM_PROVIDER and instantiates the corresponding
-    LangChain chat model (e.g., ChatOpenAI, ChatAnthropic).
 
     Returns:
         An instance of a LangChain BaseLanguageModel (e.g., ChatOpenAI)
@@ -41,7 +38,7 @@ def get_llm_instance():
         return None
 
     try:
-        # --- Define a helper function to extract plain model name ---
+        # Helper function to extract plain model name (remove provider prefix)
         def get_plain_model_name(full_name):
             if "/" in full_name:
                 plain_name = full_name.split('/', 1)[1]
@@ -49,46 +46,45 @@ def get_llm_instance():
                 return plain_name
             logger.debug(f"Using model name as is (no prefix found): '{full_name}'")
             return full_name
-        # --- End helper function ---
 
         if provider == "openai":
-            # --- OpenAI ---
+            # OpenAI
             api_key = Config.OPENAI_API_KEY
             full_model_name = Config.OPENAI_MODEL
-            base_url = Config.OPENAI_API_BASe
             plain_model_name = get_plain_model_name(full_model_name)
 
             if not api_key:
                 logger.error("OpenAI API key (OPENAI_API_KEY) not found in configuration.")
                 return None
+                
             try:
                 from langchain_openai import ChatOpenAI
                 llm_instance = ChatOpenAI(
                     model=plain_model_name,
                     temperature=temperature,
-                    api_key=api_key # Explicitly pass key for clarity
+                    api_key=api_key
                 )
-                logger.info(f"Initialized ChatOpenAI with model: {model_name}")
+                logger.info(f"Initialized ChatOpenAI with model: {plain_model_name}")
             except ImportError:
                 logger.error("Failed to import ChatOpenAI. Install 'langchain-openai'.")
                 return None
 
         elif provider == "anthropic":
-            # --- Anthropic ---
-            api_key = Config.ANTHROPIC_API_KEY # Assumes this exists in Config
-            full_model_name = Config.ANTHROPIC_MODEL # Assumes this exists in Config
+            # Anthropic
+            api_key = Config.ANTHROPIC_API_KEY
+            full_model_name = Config.ANTHROPIC_MODEL
             plain_model_name = get_plain_model_name(full_model_name)
+            
             if not api_key:
                 logger.error("Anthropic API key (ANTHROPIC_API_KEY) not found in configuration.")
                 return None
+                
             try:
                 from langchain_anthropic import ChatAnthropic
                 llm_instance = ChatAnthropic(
                     model=plain_model_name,
                     temperature=temperature,
-                    api_key=api_key,
-                    # Add any other required Anthropic parameters here
-                    # max_tokens_to_sample=1024 # Example parameter
+                    api_key=api_key
                 )
                 logger.info(f"Initialized ChatAnthropic with model: {plain_model_name}")
             except ImportError:
@@ -96,21 +92,22 @@ def get_llm_instance():
                 return None
 
         elif provider == "google":
-            # --- Google Gemini ---
-            api_key = Config.GOOGLE_API_KEY # Assumes this exists in Config
-            full_model_name = Config.GEMINI_MODEL # Assumes this exists in Config
+            # Google Gemini
+            api_key = Config.GOOGLE_API_KEY
+            full_model_name = Config.GEMINI_MODEL
             plain_model_name = get_plain_model_name(full_model_name)
+            
             if not api_key:
                 logger.error("Google API key (GOOGLE_API_KEY) not found in configuration.")
                 return None
+                
             try:
                 from langchain_google_genai import ChatGoogleGenerativeAI
-                # Note: Temperature might be handled differently or have specific ranges
                 llm_instance = ChatGoogleGenerativeAI(
                     model=plain_model_name,
                     google_api_key=api_key,
                     temperature=temperature,
-                    convert_system_message_to_human=True # Often helpful for Gemini
+                    convert_system_message_to_human=True
                 )
                 logger.info(f"Initialized ChatGoogleGenerativeAI with model: {plain_model_name}")
             except ImportError:
@@ -118,48 +115,44 @@ def get_llm_instance():
                 return None
 
         elif provider == "mistralai":
+            # Mistral AI
             api_key = Config.MISTRAL_API_KEY
             full_model_name = Config.MISTRAL_MODEL
             plain_model_name = get_plain_model_name(full_model_name)
 
-            if not api_key: 
+            if not api_key:
                 logger.error("Mistral API key (MISTRAL_API_KEY) not found.")
                 return None
+                
             try:
                 from langchain_mistralai.chat_models import ChatMistralAI
                 llm_instance = ChatMistralAI(
-                    model=plain_model_name, 
-                    mistral_api_key=api_key, 
-                    temperature=temperature)
+                    model=plain_model_name,
+                    mistral_api_key=api_key,
+                    temperature=temperature
+                )
                 logger.info(f"Initialized ChatMistralAI with model: {plain_model_name}")
-            except ImportError: 
+            except ImportError:
                 logger.error("Failed to import ChatMistralAI. Install 'langchain-mistralai'.")
                 return None
 
         elif provider == "ollama":
+            # Ollama
             full_model_name = Config.OLLAMA_MODEL
-            base_url = Config.OLLAMA_BASE_URL
             plain_model_name = get_plain_model_name(full_model_name)
 
-            logger.info(f"Attempting Ollama connection: model='{plain_model_name}', ...")
-            logger.warning(...)
             try:
-                from langchain_ollama import ChatOllama
-                llm_instance = ChatOllama(
+                from langchain_community.llms import Ollama
+                llm_instance = Ollama(
                     model=plain_model_name,
-                    base_url = base_url,
-                    temperature= temperature
-                    ) 
-
-                logger.info(f"Initialized ChatOllama with model: {plain_model_name} at {base_url}")
-                # REMOVED Attribute Override Block
-            except ImportError: logger.error(...); return None
-            except Exception as ollama_err: logger.error(...); return None
-
-        # --- Add blocks for other providers (ex:) here ---
+                    temperature=temperature
+                )
+                logger.info(f"Initialized Ollama with model: {plain_model_name}")
+            except ImportError:
+                logger.error("Failed to import Ollama. Install 'langchain-community'.")
+                return None
 
         else:
-            # This case should technically be caught by the initial check, but added for safety
             logger.error(f"Provider '{provider}' logic not implemented in factory.")
             return None
 
